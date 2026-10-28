@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stack Facilitation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#e0f2fe;--bg2:#38bdf8;--card:rgba(255,255,255,.92);--text:#0c4a6e;--head:#075985;--muted:#64748b;--line:#bae6fd;--field:#f0f9ff;--m1:#0d9488;--m2:#0284c7;--st:#7dd3fc;--st-t:#0c4a6e;--rs1:#0e7490;--rs2:#14b8a6;--warn:#f59e0b;--bad:#dc2626;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#0b1b2b;--bg2:#0f3a57;--card:rgba(20,34,48,.92);--text:#dbeafe;--head:#bae6fd;--muted:#94a3b8;--line:#1e4560;--field:#12283a;--st:#1e6a94;--st-t:#e0f2fe;color-scheme:dark}}
+:root[data-theme="dark"]{--bg1:#0b1b2b;--bg2:#0f3a57;--card:rgba(20,34,48,.92);--text:#dbeafe;--head:#bae6fd;--muted:#94a3b8;--line:#1e4560;--field:#12283a;--st:#1e6a94;--st-t:#e0f2fe;color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',system-ui,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2)) fixed;color:var(--text);min-height:100vh;padding:14px 12px 40px}
+.wrap{max-width:1200px;margin:0 auto}
+header{display:flex;flex-direction:column;align-items:center;gap:18px;margin:18px 0 24px;text-align:center;position:relative}
+h1{font-size:clamp(30px,6vw,48px);color:var(--head);line-height:1.15}
+header p{color:var(--head);opacity:.85}
+#edit{position:absolute;right:0;top:0}
+.timer{display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:center}
+.ring{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--m1),var(--m2));display:flex;align-items:center;justify-content:center;color:#fff;font-size:38px;font-weight:700;font-variant-numeric:tabular-nums}
+.ring.warn{background:linear-gradient(135deg,#fbbf24,#f59e0b);animation:pulse 1s infinite}
+.ring.exp{background:linear-gradient(135deg,#ef4444,#dc2626);animation:pulse .5s infinite}
+@keyframes pulse{50%{transform:scale(1.05)}}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;font-weight:600;border:none;border-radius:10px;padding:11px 18px;cursor:pointer;color:#fff;background:linear-gradient(135deg,#0891b2,#0284c7)}
+button:hover{opacity:.9}
+.pause{background:linear-gradient(135deg,#64748b,#475569)}.go{background:linear-gradient(135deg,#0d9488,#059669)}
+.alt{background:linear-gradient(135deg,#38bdf8,#0d9488)}.plain{background:var(--card);color:var(--head);border:1px solid var(--line)}
+.layout{display:grid;grid-template-columns:420px 1fr;gap:18px;align-items:start}
+@media(max-width:1000px){.layout{grid-template-columns:1fr}.side{order:3}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:16px}
+.panel h2{font-size:18px;color:var(--head);margin-bottom:12px}
+input,select,textarea{font:inherit;width:100%;padding:11px;border:2px solid var(--st);border-radius:8px;background:var(--field);color:var(--text);margin-bottom:10px}
+textarea{min-height:240px;resize:vertical;font-size:14px}
+label{display:block;font-size:13px;font-weight:600;color:var(--head);margin-bottom:3px}
+.members{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:60vh;overflow-y:auto}
+@media(max-width:520px){.members{grid-template-columns:1fr}}
+.mc{background:linear-gradient(135deg,var(--m1),var(--m2));color:#fff;border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.mi{display:flex;justify-content:space-between;gap:6px;align-items:center;font-weight:600;font-size:14px;word-break:break-word}
+.b{background:rgba(255,255,255,.3);border-radius:8px;padding:3px 8px;font-size:11px;font-weight:600;flex-shrink:0}
+.b.hi{background:linear-gradient(135deg,#f97316,#ea580c)}
+.ma{display:flex;gap:6px}
+.ma button{flex:1;padding:5px 8px;font-size:11px;border-radius:6px}
+.add{background:rgba(255,255,255,.95);color:#0d9488}.resp{background:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.5)}
+.speakers{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.speakers{grid-template-columns:1fr}}
+.cur{background:linear-gradient(135deg,#0c4a6e,#075985 30%,#0891b2 70%,#0d9488);color:#fff;border-radius:16px;padding:28px;text-align:center;min-height:200px;display:flex;flex-direction:column;justify-content:center;gap:8px}
+.cur.empty{background:linear-gradient(135deg,#cbd5e1,#94a3b8);color:#475569}
+.cur small{text-transform:uppercase;letter-spacing:1px;opacity:.9}
+.cur b{font-size:34px}
+.item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:13px 16px;border-radius:12px;margin-bottom:10px;color:#fff;background:linear-gradient(135deg,var(--rs1),var(--rs2))}
+.item.s{background:linear-gradient(135deg,var(--st),#0ea5e9);color:var(--st-t)}
+.item span{display:flex;align-items:center;gap:10px;font-weight:600}
+.pos{background:rgba(255,255,255,.3);width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+.rm{background:rgba(12,74,110,.2);color:inherit;padding:5px 10px;font-size:12px;border-radius:8px}
+.empty-s{text-align:center;color:var(--muted);font-style:italic;padding:28px}
+.note{position:fixed;top:14px;right:14px;z-index:20;background:linear-gradient(135deg,#0284c7,#075985);color:#fff;padding:16px 20px;border-radius:12px;display:none;max-width:340px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.note.show{display:block}.note p{font-weight:600;margin-bottom:10px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:30;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:20px 12px}
+.modal.show{display:flex}
+.box{background:var(--card);backdrop-filter:blur(6px);background-color:var(--field);border-radius:16px;padding:20px;width:100%;max-width:560px}
+.hint{font-size:12px;color:var(--muted);margin:-4px 0 10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <button id="edit" class="plain">⚙ Edit</button>
+  <div><h1 id="title"></h1><p id="org"></p></div>
+  <div class="timer">
+    <div class="ring" id="ring">3:00</div>
+    <div class="row"><button class="go" id="start">Start</button><button class="pause" id="pause">Pause</button><button id="reset">Reset</button></div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="side panel">
+    <h2>Members</h2>
+    <select id="filter"></select>
+    <input id="search" placeholder="Search members…" autocomplete="off">
+    <div class="members" id="members"></div>
+  </aside>
+  <main>
+    <div class="speakers">
+      <div class="cur empty" id="cur"><small>Current Speaker</small><b id="curName">No one speaking</b><span id="curCount"></span></div>
+      <div class="panel" style="margin:0"><h2>Response Queue</h2><div id="resp"></div></div>
+      <button id="nextS">Next Speaker →</button>
+      <button class="alt" id="nextR">Next Response →</button>
+    </div>
+    <div class="panel" style="margin-top:16px">
+      <h2>Stack List</h2><div id="stack"></div>
+      <div class="row"><button id="clear">Clear Stack</button><button class="alt" id="resetC">Reset All Counts</button></div>
+    </div>
+  </main>
+</div>
+</div>
+
+<div class="note" id="note"><p id="noteText"></p><div class="row"><button class="go" id="extend">Extend</button><button class="plain" id="dismiss">Dismiss</button></div></div>
+
+<div class="modal" id="modal"><div class="box">
+  <h2 style="margin-bottom:14px;color:var(--head)">Edit your app</h2>
+  <label>Title</label><input id="eTitle">
+  <label>Subtitle / organization</label><input id="eOrg">
+  <label>Speaking time (minutes)</label><input id="eMin" type="number" min="1" max="60">
+  <label>Groups (comma-separated)</label><input id="eGroups" placeholder="Finance, Outreach, Events">
+  <label>Members (one per line)</label>
+  <p class="hint">Format: <b>Name: Group, Group</b>. Groups are optional, and any new group you type here is added automatically. Speak counts are kept if a name stays the same.</p>
+  <textarea id="eMembers"></textarea>
+  <div class="row"><button class="go" id="saveE">Save</button><button class="plain" id="cancelE">Cancel</button></div>
+</div></div>
+
+<script>
+var KEY = "stack-facilitation-custom-v1";
+var S = {
+  title: "Stack Facilitation", org: "Your Organization", minutes: 3,
+  groups: ["Group A", "Group B"],
+  members: [
+    { name: "Member 1", count: 0, groups: ["Group A"] }, { name: "Member 2", count: 0, groups: ["Group A"] },
+    { name: "Member 3", count: 0, groups: ["Group B"] }, { name: "Member 4", count: 0, groups: ["Group B"] },
+    { name: "Member 5", count: 0, groups: [] }
+  ],
+  stack: [], resp: [], current: null, original: null
+};
+var filter = "all", query = "", left = 180, iv = null, running = false;
+var $ = function (id) { return document.getElementById(id); };
+function esc(t) { var d = document.createElement("div"); d.textContent = t; return d.innerHTML; }
+function find(n) { return S.members.find(function (m) { return m.name === n; }); }
+function load() { try { var s = JSON.parse(localStorage.getItem(KEY)); if (s && s.members) S = s; } catch (e) {} }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+// ---- timer ----
+function secs() { return S.minutes * 60; }
+function drawTimer() {
+  var m = Math.floor(left / 60), s = left % 60;
+  $("ring").textContent = m + ":" + (s < 10 ? "0" : "") + s;
+  $("ring").className = "ring" + (left <= 0 ? " exp" : left <= 30 ? " warn" : "");
+}
+function pause() { running = false; clearInterval(iv); iv = null; }
+function start() {
+  if (running) return; running = true;
+  iv = setInterval(function () {
+    left--; if (left <= 0) { left = 0; pause(); drawTimer(); showNote(); } else drawTimer();
+  }, 1000);
+}
+function resetT() { pause(); left = secs(); drawTimer(); hideNote(); }
+function showNote() {
+  $("noteText").textContent = (S.current ? S.current + "’s " : "") + "time is up! Extend by " + S.minutes + " minutes?";
+  $("note").classList.add("show");
+}
+function hideNote() { $("note").classList.remove("show"); }
+
+// ---- stack logic ----
+function insertOrdered(name) {
+  var c = find(name).count;
+  var i = S.stack.findIndex(function (n) { var m = find(n); return m && m.count > c; });
+  if (i === -1) S.stack.push(name); else S.stack.splice(i, 0, name);
+}
+function addTo(name, isResp) {
+  if (isResp) {
+    if (S.current && !S.original && S.resp.length === 0) S.original = S.current;
+    S.resp.push(name);
+  } else insertOrdered(name);
+  commit();
+}
+function bump() { var m = S.current && find(S.current); if (m) m.count++; }
+function nextSpeaker() {
+  bump(); S.original = null;
+  S.current = S.stack.length ? S.stack.shift() : null;
+  resetT(); if (S.current) start();
+  commit();
+}
+function nextResp() {
+  bump();
+  if (S.resp.length) S.current = S.resp.shift();
+  else if (S.original) { S.current = S.original; S.original = null; }
+  else if (S.stack.length) { S.current = S.stack.shift(); resetT(); start(); }
+  else { S.current = null; S.original = null; }
+  commit();
+}
+function commit() { save(); render(); }
+
+// ---- render ----
+function render() {
+  $("title").textContent = S.title; $("org").textContent = S.org; document.title = S.title;
+  var opts = '<option value="all">All Members</option>' + S.groups.map(function (g) { return '<option value="' + esc(g) + '">' + esc(g) + "</option>"; }).join("");
+  $("filter").innerHTML = opts;
+  if (filter !== "all" && S.groups.indexOf(filter) === -1) filter = "all";
+  $("filter").value = filter;
+
+  var list = S.members.filter(function (m) {
+    return (filter === "all" || m.groups.indexOf(filter) !== -1) && m.name.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+  });
+  $("members").innerHTML = list.map(function (m) {
+    var n = esc(m.name);
+    return '<div class="mc"><div class="mi"><span>' + n + '</span><span class="b' + (m.count >= 2 ? " hi" : "") + '">' + m.count + '×</span></div>' +
+      '<div class="ma"><button class="add" data-a="add" data-n="' + n + '">Add</button><button class="resp" data-a="resp" data-n="' + n + '">Response</button></div></div>';
+  }).join("") || '<div class="empty-s">No members found</div>';
+
+  var cm = S.current && find(S.current);
+  $("cur").className = "cur" + (cm ? "" : " empty");
+  $("curName").textContent = cm ? cm.name : "No one speaking";
+  $("curCount").textContent = cm ? "Speak count: " + cm.count : "";
+
+  function q(arr, cls, kind, emptyMsg) {
+    if (!arr.length) return '<div class="empty-s">' + emptyMsg + "</div>";
+    return arr.map(function (n, i) {
+      var m = find(n); if (!m) return "";
+      return '<div class="item ' + cls + '"><span><i class="pos">' + (i + 1) + "</i>" + esc(n) + '<i class="b">' + m.count + '×</i></span><button class="rm" data-a="' + kind + '" data-i="' + i + '">Remove</button></div>';
+    }).join("");
+  }
+  $("stack").innerHTML = q(S.stack, "s", "rmS", "Stack is empty");
+  $("resp").innerHTML = q(S.resp, "", "rmR", "No responses");
+}
+
+// ---- events ----
+document.addEventListener("click", function (e) {
+  var t = e.target.closest("button"); if (!t) return;
+  var a = t.dataset.a;
+  if (a === "add" || a === "resp") addTo(t.dataset.n, a === "resp");
+  else if (a === "rmS") { S.stack.splice(+t.dataset.i, 1); commit(); }
+  else if (a === "rmR") { S.resp.splice(+t.dataset.i, 1); commit(); }
+});
+$("start").onclick = start; $("pause").onclick = pause; $("reset").onclick = resetT;
+$("nextS").onclick = nextSpeaker; $("nextR").onclick = nextResp;
+$("filter").onchange = function () { filter = this.value; render(); };
+$("search").oninput = function () { query = this.value.trim(); render(); };
+$("extend").onclick = function () { resetT(); start(); };
+$("dismiss").onclick = hideNote;
+
+function twice(btn, label, fn) {
+  btn.onclick = function () {
+    if (btn.dataset.armed) { clearTimeout(+btn.dataset.armed); delete btn.dataset.armed; btn.textContent = label; fn(); return; }
+    btn.textContent = "Sure? Click again";
+    btn.dataset.armed = setTimeout(function () { delete btn.dataset.armed; btn.textContent = label; }, 3000);
+  };
+}
+twice($("clear"), "Clear Stack", function () { S.stack = []; S.resp = []; S.original = null; commit(); });
+twice($("resetC"), "Reset All Counts", function () { S.members.forEach(function (m) { m.count = 0; }); commit(); });
+
+document.addEventListener("keydown", function (e) {
+  var t = e.target, tag = t.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "BUTTON" || $("modal").classList.contains("show")) return;
+  if (e.key === "Enter") { e.preventDefault(); nextSpeaker(); }
+  if (e.key === "ArrowDown") { e.preventDefault(); nextResp(); }
+});
+
+// ---- edit dialog ----
+$("edit").onclick = function () {
+  $("eTitle").value = S.title; $("eOrg").value = S.org; $("eMin").value = S.minutes;
+  $("eGroups").value = S.groups.join(", ");
+  $("eMembers").value = S.members.map(function (m) { return m.name + (m.groups.length ? ": " + m.groups.join(", ") : ""); }).join("\n");
+  $("modal").classList.add("show");
+};
+$("cancelE").onclick = function () { $("modal").classList.remove("show"); };
+$("saveE").onclick = function () {
+  var groups = $("eGroups").value.split(",").map(function (g) { return g.trim(); }).filter(Boolean);
+  var members = [], seen = {};
+  $("eMembers").value.split("\n").forEach(function (line) {
+    line = line.trim(); if (!line) return;
+    var i = line.indexOf(":"), name = (i === -1 ? line : line.slice(0, i)).trim();
+    var gs = i === -1 ? [] : line.slice(i + 1).split(",").map(function (g) { return g.trim(); }).filter(Boolean);
+    if (!name || seen[name]) return; seen[name] = 1;
+    gs.forEach(function (g) { if (groups.indexOf(g) === -1) groups.push(g); });
+    var old = find(name);
+    members.push({ name: name, count: old ? old.count : 0, groups: gs });
+  });
+  S.title = $("eTitle").value.trim() || "Stack Facilitation";
+  S.org = $("eOrg").value.trim();
+  var wasMin = S.minutes;
+  S.minutes = Math.max(1, Math.min(60, +$("eMin").value || 3));
+  S.groups = groups; S.members = members;
+  var ok = function (n) { return !!find(n); };
+  S.stack = S.stack.filter(ok); S.resp = S.resp.filter(ok);
+  if (!ok(S.current)) S.current = null; if (!ok(S.original)) S.original = null;
+  if (S.minutes !== wasMin && !running) { left = secs(); drawTimer(); }
+  $("modal").classList.remove("show"); commit();
+};
+
+load(); left = secs(); drawTimer(); render();
+</script>
+</body>
+</html>
